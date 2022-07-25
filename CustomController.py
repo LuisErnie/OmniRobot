@@ -1,4 +1,6 @@
+from turtle import speed
 from pyPS4Controller.controller import Controller
+from motorDrive import *
 
 
 class ControllerConfig(Controller):
@@ -34,26 +36,23 @@ class ControllerConfig(Controller):
         pass
 
     def on_up_arrow_press(self):
-        R_MTR = 0
-        L_MTR = 1
-        FWD = 1
-        BWD = 0
+        motorDrive(self, 1, speed)
         print("Forward")
+        
 
     def on_down_arrow_press(self):
-        R_MTR = 0
-        L_MTR = 1
-        FWD = 0
-        BWD = 1
+        motorDrive(self, 2, speed)
         print("Backward")
     
     def on_up_down_arrow_release(self):
         print ("No Direction")
     
     def on_left_arrow_press(self):
+        motorDrive(self, 3, speed)
         print("Left")
 
     def on_right_arrow_press(self):
+        motorDrive(self, 4, speed)
         print("Right")
 
     def on_left_right_arrow_release(self):
