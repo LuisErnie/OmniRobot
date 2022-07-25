@@ -7,14 +7,17 @@ class ControllerConfig(Controller):
     def __init__(self, **kwargs):
         Controller.__init__(self, **kwargs)
         self.velocity = 100
+        self.gas = 0
+        self.motor_start = 0
 
     # Drive controls
     def on_x_press(self):
-        ON_Motor = 1
+        self.gas = 1
         print("Pedal to the metal")
 
     def on_x_release(self):
-        ON_Motor = 0
+        self.gas = 0
+        motorDrive(self, 3, 0, self.gas, self.motor_start)
         print("Brake!!!")
     
     def on_triangle_press(self):
@@ -36,26 +39,32 @@ class ControllerConfig(Controller):
         pass
 
     def on_up_arrow_press(self):
-        motorDrive(self, 1, self.velocity)
+        motorDrive(self, 1, self.velocity, self.gas, self.motor_start)
+        self. motor_start = 1
         print("Forward")
         
 
     def on_down_arrow_press(self):
-        motorDrive(self, 2, self.velocity)
+        motorDrive(self, 2, self.velocity, self.gas, self.motor_start)
+        self. motor_start = 1
         print("Backward")
     
     def on_up_down_arrow_release(self):
+        motorDrive(self, 1, 0, self.gas, self.motor_start)
         print ("No Direction")
     
     def on_left_arrow_press(self):
-        motorDrive(self, 3, self.velocity)
+        motorDrive(self, 3, self.velocity, self.gas, self.motor_start)
+        self. motor_start = 1
         print("Left")
 
     def on_right_arrow_press(self):
-        motorDrive(self, 4, self.velocity)
+        motorDrive(self, 4, self.velocity, self.gas, self.motor_start)
+        self. motor_start = 1
         print("Right")
 
     def on_left_right_arrow_release(self):
+        motorDrive(self, 3, 0, self.gas, self.motor_start)
         print ("No Direction")
 
     def on_L1_press(self):
