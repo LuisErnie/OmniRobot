@@ -14,12 +14,13 @@ def motorError():
 	MotorF.disable()
 	MotorB.disable()
 
-def motorDrive(self, direcction, speed):
-	R_MTR = 0
-	L_MTR = 1
-	FWD = 1
-	BWD = 0
-	
+def motorDrive(self, ort_dir, velocity):
+	R_MTR = 1
+	L_MTR = 0
+	FWD = 0
+	BWD = 1
+	print("speed: {0}".format(velocity))
+
 	print("Motor Ortogonal Drive Test.")
 
 	if MotorF.connected == False and MotorB.connected == False:
@@ -45,29 +46,29 @@ def motorDrive(self, direcction, speed):
 	time.sleep(.250) # time out required to ensure driver is enabled
 
 	while True:
-		if direcction == 1:
-			MotorF.set_drive(R_MTR,FWD,speed)
-			MotorF.set_drive(L_MTR,BWD,speed)
-			MotorB.set_drive(R_MTR,FWD,speed)
-			MotorB.set_drive(L_MTR,BWD,speed)
+		if ort_dir == 1:
+			MotorF.set_drive(R_MTR,FWD,velocity)
+			MotorF.set_drive(L_MTR,BWD,velocity)
+			MotorB.set_drive(R_MTR,FWD,velocity)
+			MotorB.set_drive(L_MTR,BWD,velocity)
 			time.sleep(.05)
-		elif direcction == 2:
-			MotorF.set_drive(R_MTR,FWD,speed)
-			MotorF.set_drive(L_MTR,BWD,speed)
-			MotorB.set_drive(R_MTR,FWD,speed)
-			MotorB.set_drive(L_MTR,BWD,speed)
+		elif ort_dir == 2:
+			MotorF.set_drive(R_MTR,BWD,velocity)
+			MotorF.set_drive(L_MTR,FWD,velocity)	
+			MotorB.set_drive(R_MTR,BWD,velocity)
+			MotorB.set_drive(L_MTR,FWD,velocity)
 			time.sleep(.05)
-		elif direcction == 3:
-			MotorF.set_drive(R_MTR,FWD,speed)
-			MotorF.set_drive(L_MTR,BWD,speed)
-			MotorB.set_drive(R_MTR,FWD,speed)
-			MotorB.set_drive(L_MTR,BWD,speed)
+		elif ort_dir == 3:
+			MotorF.set_drive(R_MTR,FWD,velocity)
+			MotorF.set_drive(L_MTR,FWD,velocity)
+			MotorB.set_drive(R_MTR,BWD,velocity)
+			MotorB.set_drive(L_MTR,BWD,velocity)
 			time.sleep(.05)
-		elif direcction == 4:
-			MotorF.set_drive(R_MTR,FWD,speed)
-			MotorF.set_drive(L_MTR,BWD,speed)
-			MotorB.set_drive(R_MTR,FWD,speed)
-			MotorB.set_drive(L_MTR,BWD,speed)
+		elif ort_dir == 4:
+			MotorF.set_drive(R_MTR,BWD,velocity)
+			MotorF.set_drive(L_MTR,BWD,velocity)
+			MotorB.set_drive(R_MTR,FWD,velocity)
+			MotorB.set_drive(L_MTR,FWD,velocity)
 			time.sleep(.05)
 		else:
 			print("Direction not Valid. Check controller.", \
