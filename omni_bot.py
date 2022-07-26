@@ -27,6 +27,7 @@ import sys
 
 controller = ControllerConfig(interface="/dev/input/js0", connecting_using_ds4drv=False)
 
+
 #diagonal sequences callback functions
 def diagonal_ul():
 	controller.ort_dir = 5
@@ -52,6 +53,7 @@ def my_sequences():
 		{"inputs": ['down','right'], "callback": diagonal_dr},
 		{"inputs": ['right','down'], "callback": diagonal_dr}
     ]
+
 
 # Remote controller execution
 if __name__ == '__main__':

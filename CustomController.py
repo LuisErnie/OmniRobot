@@ -10,6 +10,7 @@ class ControllerConfig(Controller):
         self.ort_dir = 1
         self.gas = 0
         self.motor_start = 0
+        self.invert = 0
 
     # Drive controls
     def on_x_press(self):
@@ -34,7 +35,6 @@ class ControllerConfig(Controller):
         self.gas = 1
         self.invert = 1
         print("Back to the Future")
-        pass
     
     def on_circle_release(self):
         self.gas = 0
@@ -98,7 +98,7 @@ class ControllerConfig(Controller):
         pass
 
     def on_R2_press(self, value):
-        #self.velocity = int (float (value) / float(255)) + 127
+        self.velocity = int((float (value) / float(255) + 127)/2)
         print("value: {0}, velocity: {1}".format(value, self.velocity))
 
         motorDrive(self, self.ort_dir, self.velocity, self.gas, self.motor_start, self.invert)
