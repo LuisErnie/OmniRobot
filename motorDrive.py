@@ -10,26 +10,11 @@ MotorF = qwiic_scmd.QwiicScmd(0x5D)
 MotorB = qwiic_scmd.QwiicScmd(0x5E) # Address range 0x58 to 0x61
 
 def motorError():
-	print("Ending example.")
+	print("Ending Controller.")
 	MotorF.disable()
 	MotorB.disable()
 
-def motorDrive(self, ort_dir, velocity, gas, motor_start, motor_invert):
-	if motor_invert == 0:
-		R_MTR = 1
-		L_MTR = 0
-		FWD = 0
-		BWD = 1
-	elif motor_invert == 1:
-		R_MTR = 1
-		L_MTR = 0
-		FWD = 1
-		BWD = 0
-	else:
-		print("Motor Driver direction wrong. Check configuration.", \
-				file=sys.stderr)
-		return
-
+def motorInit(self, motor_start):
 	# Single execution motor driver initialization
 	if motor_start == 0:
 		print("Motor Ortogonal Drive Test.")
@@ -56,6 +41,24 @@ def motorDrive(self, ort_dir, velocity, gas, motor_start, motor_invert):
 		print("Motors enabled")
 		time.sleep(.250) # time out required to ensure driver is enabled
 
+def motorDrive(self, ort_dir, velocity, gas, motor_start, motor_invert):
+	if motor_invert == 0:
+		R_MTR = 1
+		L_MTR = 0
+		FWD = 0
+		BWD = 1
+	elif motor_invert == 1:
+		R_MTR = 1
+		L_MTR = 0
+		FWD = 1
+		BWD = 0
+	else:
+		print("Motor Driver direction wrong. Check configuration.", \
+				file=sys.stderr)
+		return
+
+	motorInit(self, motor_start)
+ 
 	# Trottle activated to move robot
 	if gas == 1:
 		if ort_dir == 1: # Forward
@@ -102,9 +105,52 @@ def motorDrive(self, ort_dir, velocity, gas, motor_start, motor_invert):
 			print("Direction not Valid. Check controller.", \
 				file=sys.stderr)
 			return
-		#time.sleep(.250)
-	else:
+	else: # Stop
 		MotorF.set_drive(0,0,0)
 		MotorF.set_drive(1,0,0)
 		MotorB.set_drive(0,0,0)
 		MotorB.set_drive(1,0,0)
+  
+	#time.sleep(.250)
+
+
+def motorTurn(self, velocity, gas, turn, motor_start, motor_invert):
+	if motor_invert == 0:
+		R_MTR = 1
+		L_MTR = 0
+		FWD = 0
+		BWD = 1
+	elif motor_invert == 1:
+		R_MTR = 1
+		L_MTR = 0
+		FWD = 1
+		BWD = 0
+	else:
+		print("Motor Driver direction wrong. Check configuration.", \
+				file=sys.stderr)
+		return
+
+	motorInit(self, motor_start)
+
+	if gas == 1:
+		if turn == 1:
+			MotorF.set_drive(R_MTR,FWD,velocity)
+			MotorF.set_drive(L_MTR,FWD,velocity)
+			MotorB.set_drive(R_MTR,FWD,velocity)
+			MotorB.set_drive(L_MTR,FWD,velocity)
+		elif turn == 2:
+			MotorF.set_drive(R_MTR,BWD,velocity)
+			MotorF.set_drive(L_MTR,BWD,velocity)
+			MotorB.set_drive(R_MTR,BWD,velocity)
+			MotorB.set_drive(L_MTR,BWD,velocity)
+		else:
+			print("Turn not Valid. Check controller.", \
+					file=sys.stderr)
+			return
+	else: # Stop
+		MotorF.set_drive(0,0,0)
+		MotorF.set_drive(1,0,0)
+		MotorB.set_drive(0,0,0)
+		MotorB.set_drive(1,0,0)
+
+	#time.sleep(.250)
