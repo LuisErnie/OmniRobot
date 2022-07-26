@@ -1,5 +1,5 @@
 from pyPS4Controller.controller import Controller
-from motorDrive import *
+from motorDrive import motorDrive
 
 
 class ControllerConfig(Controller):
@@ -7,17 +7,21 @@ class ControllerConfig(Controller):
     def __init__(self, **kwargs):
         Controller.__init__(self, **kwargs)
         self.velocity = 100
+        self.ort_dir = 1
         self.gas = 0
         self.motor_start = 0
 
     # Drive controls
     def on_x_press(self):
         self.gas = 1
+        self.invert = 0
         print("Pedal to the metal")
 
     def on_x_release(self):
         self.gas = 0
-        motorDrive(self, 3, 0, self.gas, self.motor_start)
+        self.invert = 0
+        motorDrive(self, self.ort_dir, 0, self.gas, self.motor_start, self.invert)
+        self.motor_start = 1
         print("Brake!!!")
     
     def on_triangle_press(self):
@@ -27,10 +31,17 @@ class ControllerConfig(Controller):
         pass
     
     def on_circle_press(self):
+        self.gas = 1
+        self.invert = 1
+        print("Back to the Future")
         pass
     
     def on_circle_release(self):
-        pass
+        self.gas = 0
+        self.invert = 1
+        motorDrive(self, self.ort_dir, 0, self.gas, self.motor_start, self.invert)
+        self.motor_start = 1
+        print("Brake!!!")
     
     def on_square_press(self):
         pass
@@ -39,32 +50,32 @@ class ControllerConfig(Controller):
         pass
 
     def on_up_arrow_press(self):
-        motorDrive(self, 1, self.velocity, self.gas, self.motor_start)
-        self. motor_start = 1
+        self.ort_dir=1
         print("Forward")
         
 
     def on_down_arrow_press(self):
-        motorDrive(self, 2, self.velocity, self.gas, self.motor_start)
-        self. motor_start = 1
+        self.ort_dir=2
         print("Backward")
     
     def on_up_down_arrow_release(self):
-        motorDrive(self, 1, 0, self.gas, self.motor_start)
+        self.gas = 0
+        motorDrive(self, self.ort_dir, 0, self.gas, self.motor_start, self.invert)
+        self.motor_start = 1
         print ("No Direction")
     
     def on_left_arrow_press(self):
-        motorDrive(self, 3, self.velocity, self.gas, self.motor_start)
-        self. motor_start = 1
+        self.ort_dir=3
         print("Left")
 
     def on_right_arrow_press(self):
-        motorDrive(self, 4, self.velocity, self.gas, self.motor_start)
-        self. motor_start = 1
+        self.ort_dir=4
         print("Right")
 
     def on_left_right_arrow_release(self):
-        motorDrive(self, 3, 0, self.gas, self.motor_start)
+        self.gas = 0
+        motorDrive(self, self.ort_dir, 0, self.gas, self.motor_start, self.invert)
+        self.motor_start = 1
         print ("No Direction")
 
     def on_L1_press(self):
@@ -75,8 +86,9 @@ class ControllerConfig(Controller):
 
     def on_L2_press(self, value):
         print("on_L2_press: {}".format(value))
+        pass
 
-    def  on_L2_release(self):
+    def on_L2_release(self):
         pass
     
     def on_R1_press(self):
@@ -86,10 +98,17 @@ class ControllerConfig(Controller):
         pass
 
     def on_R2_press(self, value):
-        print("on_R2_press: {}".format(value))
+        #self.velocity = int (float (value) / float(255)) + 127
+        print("value: {0}, velocity: {1}".format(value, self.velocity))
+
+        motorDrive(self, self.ort_dir, self.velocity, self.gas, self.motor_start, self.invert)
+        self.motor_start = 1
+        print("on_R2_press: {}".format(self.velocity))
 
     def on_R2_release(self):
-        pass
+        self.velocity = 0
+        motorDrive(self, self.ort_dir, self.velocity, self.gas, self.motor_start, self.invert)
+        self.motor_start = 1
 
     def on_L3_up(self, value):
         print("on_L3_up: {}".format(value))
