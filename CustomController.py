@@ -1,7 +1,6 @@
 from pyPS4Controller.controller import Controller
 from motorDrive import motorDrive, motorTurn
 from sensorReading import sensorsRead
-import time
 
 class ControllerConfig(Controller):
 
