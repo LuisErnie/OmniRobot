@@ -1,6 +1,7 @@
 from pyPS4Controller.controller import Controller
 from motorDrive import motorDrive, motorTurn
-
+from sensorReading import sensorsRead
+import time
 
 class ControllerConfig(Controller):
 
@@ -12,185 +13,206 @@ class ControllerConfig(Controller):
         self.turn = 0
         self.motor_start = 0
         self.invert = 0
+        self.distanceL = 100
+        self.distanceR = 100
 
+    def stopRobot(self):
+        self.velocity = 0
+        motorDrive(self.ort_dir, self.velocity, self.gas, self.motor_start, self.invert)
+        #motorTurn(self.velocity, self.gas, self.turn, self.motor_start, self.invert)
+        self.motor_start = 1
+        
     # Drive controls
-    def _on_x_press(self):
+    def on_x_press(self):
         self.gas = 1
         self.invert = 0
         #print("Pedal to the metal")
 
-    def _on_x_release(self):
+    def on_x_release(self):
         self.gas = 0
         self.invert = 0
-        self.velocity = 0
-        motorDrive(self, self.ort_dir, self.velocity, self.gas, self.motor_start, self.invert)
-        self.motor_start = 1
+        self.stopRobot()
         #print("Brake!!!")
     
-    def _on_triangle_press(self):
+    def on_triangle_press(self):
+        self.distanceL, self.distanceR = sensorsRead()
+        print('Left: {0:.2f} cm, Right: {1:.2f} cm'.format(self.distanceL, self.distanceR))
+        #time.sleep(.250)
+    
+    def on_triangle_release(self):
         pass
     
-    def _on_triangle_release(self):
-        pass
-    
-    def _on_circle_press(self):
+    def on_circle_press(self):
         self.gas = 1
         self.invert = 1
         #print("Back to the Future")
     
-    def _on_circle_release(self):
+    def on_circle_release(self):
         self.gas = 0
         self.invert = 1
-        self.velocity = 0
-        motorDrive(self, self.ort_dir, self.velocity, self.gas, self.motor_start, self.invert)
-        self.motor_start = 1
+        self.stopRobot()
         #print("Brake!!!")
     
-    def _on_square_press(self):
+    def on_square_press(self):
         pass
     
-    def _on_square_release(self):
+    def on_square_release(self):
         pass
 
-    def _on_up_arrow_press(self):
-        self.ort_dir=1
+    def on_up_arrow_press(self):
+        self.ort_dir = 1
         #print("Forward")
         
 
-    def _on_down_arrow_press(self):
-        self.ort_dir=2
+    def on_down_arrow_press(self):
+        self.ort_dir = 2
         #print("Backward")
     
-    def _on_up_down_arrow_release(self):
-        self.velocity = 0
-        motorDrive(self, self.ort_dir, self.velocity, self.gas, self.motor_start, self.invert)
-        self.motor_start = 1
+    def on_up_down_arrow_release(self):
+        self.stopRobot()
         #print ("No Direction")
     
-    def _on_left_arrow_press(self):
-        self.ort_dir=3
+    def on_left_arrow_press(self):
+        self.ort_dir = 3
         #print("Left")
 
-    def _on_right_arrow_press(self):
-        self.ort_dir=4
+    def on_right_arrow_press(self):
+        self.ort_dir = 4
         #print("Right")
 
-    def _on_left_right_arrow_release(self):
-        self.velocity = 0
-        motorDrive(self, self.ort_dir, self.velocity, self.gas, self.motor_start, self.invert)
-        self.motor_start = 1
+    def on_left_right_arrow_release(self):
+        self.stopRobot()
         #print ("No Direction")
 
-    def _on_L1_press(self):
+    def on_L1_press(self):
         self.turn = 1
         #print ("Turn Left")
 
-    def _on_L1_release(self):
-        self.velocity = 0
-        motorTurn(self, self.velocity, self.gas, self.turn, self.motor_start, self.invert)
-        self.motor_start = 1
+    def on_L1_release(self):
+        self.stopRobot()
 
-    def _on_L2_press(self, value):
-        self.velocity = int((float (value) / float(255) + 127)/2)
-        #print("value: {0}, velocity: {1}".format(value, self.velocity))
+    def on_L2_press(self, value):
+        self.distanceL, self.distanceR = sensorsRead()
+        try: 
+            #print('Left: {0:.2f} cm, Right: {1:.2f} cm'.format(self.distanceL, self.distanceR))
+            
+            if (self.turn == 1 and self.distanceL > 10) or (self.turn == 2 and self.distanceR > 10):
+                self.velocity = int(float (value) / float(255) + 117)
+                #print("value: {0}, velocity: {1}".format(value, self.velocity))
 
-        motorDrive(self, self.ort_dir, self.velocity, self.gas, self.motor_start, self.invert)
-        
-        motorTurn(self, self.velocity, self.gas, self.turn, self.motor_start, self.invert)        
-        self.motor_start = 1
+                motorTurn(self.velocity, self.gas, self.turn, self.motor_start, self.invert)        
+                self.motor_start = 1
+            else:
+                self.stopRobot()
+                if min(self.distanceL, self.distanceR) == self.distanceL:
+                    print('Too Close Left: {0:.2f} cm'.format(self.distanceL))
+                else:
+                    print('Too Close Right: {0:.2f} cm'.format(self.distanceR))
+        except TypeError:
+            pass
         #print("on_L2_press: {}".format(value))
+            
 
-    def _on_L2_release(self):
-        self.velocity = 0
-        motorDrive(self, self.ort_dir, self.velocity, self.gas, self.motor_start, self.invert)
-        self.motor_start = 1
+    def on_L2_release(self):
+        self.stopRobot()
     
-    def _on_R1_press(self):
+    def on_R1_press(self):
         self.turn = 2
         #print ("Turn Right")
 
-    def _on_R1_release(self):
-        self.velocity = 0
-        motorTurn(self, self.velocity, self.gas, self.turn, self.motor_start, self.invert)
-        self.motor_start = 1
+    def on_R1_release(self):
+        self.stopRobot()
 
-    def _on_R2_press(self, value):
-        self.velocity = int((float (value) / float(255) + 127)/2)
-        #print("value: {0}, velocity: {1}".format(value, self.velocity))
+    def on_R2_press(self, value):
+        self.distanceL, self.distanceR = sensorsRead()
+        try:
+            #print('Left: {0:.2f} cm, Right: {1:.2f} cm'.format(self.distanceL, self.distanceR))
+            
+            if (self.ort_dir == 3 and self.distanceL > 10) or (self.ort_dir == 4 and self.distanceR > 10) or (self.ort_dir != 3 and self.ort_dir != 4):
+                self.velocity = int(float (value) / float(255) + 117)
+                #print("value: {0}, velocity: {1}".format(value, self.velocity))
 
-        motorDrive(self, self.ort_dir, self.velocity, self.gas, self.motor_start, self.invert)
-        self.motor_start = 1
+                motorDrive(self.ort_dir, self.velocity, self.gas, self.motor_start, self.invert)
+                self.motor_start = 1
+            else:
+                self.stopRobot()
+                if min(self.distanceL, self.distanceR) == self.distanceL:
+                    print('Too Close Left: {0:.2f} cm'.format(self.distanceL))
+                else:
+                    print('Too Close Right: {0:.2f} cm'.format(self.distanceR))
+        except TypeError:
+            pass
         #print("on_R2_press: {}".format(self.velocity))
 
-    def _on_R2_release(self):
-        self.velocity = 0
-        motorDrive(self, self.ort_dir, self.velocity, self.gas, self.motor_start, self.invert)
-        self.motor_start = 1
+    def on_R2_release(self):
+        self.stopRobot()
 
-    def _on_L3_up(self, value):
+"""
+    def on_L3_up(self, value):
         print("on_L3_up: {}".format(value))
 
-    def _on_L3_down(self, value):
+    def on_L3_down(self, value):
         print("on_L3_down: {}".format(value))
 
-    def _on_L3_left(self, value):
+    def on_L3_left(self, value):
         print("on_L3_left: {}".format(value))
 
-    def _on_L3_right(self, value):
+    def on_L3_right(self, value):
         print("on_L3_right: {}".format(value))
 
-    def _on_L3_y_at_rest(self):
-        """L3 joystick is at rest after the joystick was moved and let go off"""
+    def on_L3_y_at_rest(self):
+        #L3 joystick is at rest after the joystick was moved and let go off
         print("on_L3_y_at_rest")
 
-    def _on_L3_x_at_rest(self):
-        """L3 joystick is at rest after the joystick was moved and let go off"""
+    def on_L3_x_at_rest(self):
+        #L3 joystick is at rest after the joystick was moved and let go off
         print("on_L3_x_at_rest")
 
-    def _on_L3_press(self):
-        """L3 joystick is clicked. This event is only detected when connecting without ds4drv"""
+    def on_L3_press(self):
+        #L3 joystick is clicked. This event is only detected when connecting without ds4drv
         print("on_L3_press")
 
-    def _on_L3_release(self):
-        """L3 joystick is released after the click. This event is only detected when connecting without ds4drv"""
+    def on_L3_release(self):
+        #L3 joystick is released after the click. This event is only detected when connecting without ds4drv
         print("on_L3_release")
 
-    def _on_R3_up(self, value):
+    def on_R3_up(self, value):
         print("on_R3_up: {}".format(value))
 
-    def _on_R3_down(self, value):
+    def on_R3_down(self, value):
         print("on_R3_down: {}".format(value))
 
-    def _on_R3_left(self, value):
+    def on_R3_left(self, value):
         print("on_R3_left: {}".format(value))
 
-    def _on_R3_right(self, value):
+    def on_R3_right(self, value):
         print("on_R3_right: {}".format(value))
 
-    def _on_R3_y_at_rest(self):
-        """R3 joystick is at rest after the joystick was moved and let go off"""
+    def on_R3_y_at_rest(self):
+        #R3 joystick is at rest after the joystick was moved and let go off
         print("on_R3_y_at_rest")
 
-    def _on_R3_x_at_rest(self):
-        """R3 joystick is at rest after the joystick was moved and let go off"""
+    def on_R3_x_at_rest(self):
+        #R3 joystick is at rest after the joystick was moved and let go off
         print("on_R3_x_at_rest")
 
-    def _on_R3_press(self):
-        """R3 joystick is clicked. This event is only detected when connecting without ds4drv"""
+    def on_R3_press(self):
+        #R3 joystick is clicked. This event is only detected when connecting without ds4drv
         print("on_R3_press")
 
-    def _on_R3_release(self):
-        """R3 joystick is released after the click. This event is only detected when connecting without ds4drv"""
+    def on_R3_release(self):
+        #R3 joystick is released after the click. This event is only detected when connecting without ds4drv
         print("on_R3_release")
 
-    def _on_options_press(self):
+    def on_options_press(self):
         pass
 
-    def _on_options_release(self):
+    def on_options_release(self):
         pass
 
-    def _on_share_press(self):
+    def on_share_press(self):
         pass  # this event is only detected when connecting without ds4drv
 
-    def _on_share_release(self):
+    def on_share_release(self):
         pass  # this event is only detected when connecting without ds4drv
+"""
