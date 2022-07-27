@@ -31,16 +31,16 @@ controller = ControllerConfig(interface="/dev/input/js0", connecting_using_ds4dr
 #diagonal sequences callback functions
 def diagonal_ul():
 	controller.ort_dir = 5
-	print("Diagonal sequence detected!{0}".format(controller.ort_dir))
+	#print("Diagonal sequence detected!{0}".format(controller.ort_dir))
 def diagonal_ur():
 	controller.ort_dir = 6
-	print("Diagonal sequence detected!{0}".format(controller.ort_dir))
+	#print("Diagonal sequence detected!{0}".format(controller.ort_dir))
 def diagonal_dl():
 	controller.ort_dir = 7
-	print("Diagonal sequence detected!{0}".format(controller.ort_dir))
+	#print("Diagonal sequence detected!{0}".format(controller.ort_dir))
 def diagonal_dr():
 	controller.ort_dir = 8
-	print("Diagonal sequence detected!{0}".format(controller.ort_dir))
+	#print("Diagonal sequence detected!{0}".format(controller.ort_dir))
 
 def my_sequences():
     return [

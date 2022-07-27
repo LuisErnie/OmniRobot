@@ -10,7 +10,7 @@ class GroveUltrasonicRanger(object):
     def __init__(self, pin):
         self.dio =GPIO(pin)
  
-    def _get_distance(self):
+    def get_distance(self):
         self.dio.dir(GPIO.OUT)
         self.dio.write(0)
         usleep(2)

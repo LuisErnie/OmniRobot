@@ -1,7 +1,6 @@
 from __future__ import print_function
 import time
 import sys
-import math
 import qwiic_scmd
 
 # Quad motor driver required for omni directional drive. Default address 0x5D, secondary address 0x5E.
@@ -14,7 +13,7 @@ def motorError():
 	MotorF.disable()
 	MotorB.disable()
 
-def motorInit(self, motor_start):
+def motorInit(motor_start):
 	# Single execution motor driver initialization
 	if motor_start == 0:
 		print("Motor Ortogonal Drive Test.")
@@ -41,7 +40,7 @@ def motorInit(self, motor_start):
 		print("Motors enabled")
 		time.sleep(.250) # time out required to ensure driver is enabled
 
-def motorDrive(self, ort_dir, velocity, gas, motor_start, motor_invert):
+def motorDrive(ort_dir, velocity, gas, motor_start, motor_invert):
 	if motor_invert == 0:
 		R_MTR = 1
 		L_MTR = 0
@@ -57,7 +56,7 @@ def motorDrive(self, ort_dir, velocity, gas, motor_start, motor_invert):
 				file=sys.stderr)
 		return
 
-	motorInit(self, motor_start)
+	motorInit(motor_start)
  
 	# Trottle activated to move robot
 	if gas == 1:
@@ -114,7 +113,7 @@ def motorDrive(self, ort_dir, velocity, gas, motor_start, motor_invert):
 	#time.sleep(.250)
 
 
-def motorTurn(self, velocity, gas, turn, motor_start, motor_invert):
+def motorTurn(velocity, gas, turn, motor_start, motor_invert):
 	if motor_invert == 0:
 		R_MTR = 1
 		L_MTR = 0
@@ -130,7 +129,7 @@ def motorTurn(self, velocity, gas, turn, motor_start, motor_invert):
 				file=sys.stderr)
 		return
 
-	motorInit(self, motor_start)
+	motorInit(motor_start)
 
 	if gas == 1:
 		if turn == 1:

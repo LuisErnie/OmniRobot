@@ -1,23 +1,10 @@
-import GroveUltrasonicRanger from GroveUltrasonicRanger
+from GroveUltrasonicRanger import GroveUltrasonicRanger 
 
+sonarL = GroveUltrasonicRanger(24)
+sonarR = GroveUltrasonicRanger(26)
 
-    def get_distance(self):
-        while True:
-            dist = self._get_distance()
-            if dist:
-                return dist
-  
-def main():
-    if len(sys.argv) < 2:
-        print('Usage: {} pin_number'.format(sys.argv[0]))
-        sys.exit(1)
- 
-    sonar = GroveUltrasonicRanger(int(sys.argv[1]))
- 
-    print('Detecting distance...')
-    while True:
-        print('{} cm'.format(sonar.get_distance()))
-        time.sleep(1)
- 
-if __name__ == '__main__':
-    main()
+def sensorsRead():
+    distL = sonarL.get_distance()
+    distR = sonarR.get_distance()
+
+    return distL, distR
